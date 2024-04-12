@@ -28,6 +28,8 @@ neonwm: ${OBJ}
 install:
 	cp -f neonwm /usr/bin
 	cp -f neonwm.desktop /usr/share/xsessions
+	cp -f neonstart /usr/bin
+	chmod 755 /usr/bin/neonwm
 
 clean:
 	rm -f neonwm ${OBJ}
