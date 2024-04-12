@@ -1,0 +1,5 @@
+[Desktop Entry]
+Name=NeonWM
+Comment=A simple custom window manager
+Exec=/home/neon/Documents/Projects/NeonSystems/neon_wm/neonwm
+Type=Application
