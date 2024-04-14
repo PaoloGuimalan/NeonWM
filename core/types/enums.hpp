@@ -5,3 +5,15 @@ typedef enum {
     WINDOW_LAYOUT_VERTICAL_STRIPES,
     WINDOW_LAYOUT_FLOATING
 } WindowLayout;
+
+typedef enum {
+    DESIGN_STRAIGHT = 0,
+    DESIGN_SHARP_LEFT_UP,         
+    DESIGN_SHARP_RIGHT_UP,
+    DESIGN_SHARP_LEFT_DOWN,
+    DESIGN_SHARP_RIGHT_DOWN,
+    DESIGN_ARROW_LEFT,                        
+    DESIGN_ARROW_RIGHT,
+    DESIGN_ROUND_LEFT,
+    DESIGN_ROUND_RIGHT,
+} BarLabelDesign;
