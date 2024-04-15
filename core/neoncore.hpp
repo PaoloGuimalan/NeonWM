@@ -373,13 +373,146 @@ class neoncore
             XCloseDisplay(wm.display);
         }
 
+        FontStruct font_create(const char* fontname, const char* fontcolor, Window win) {
+            FontStruct fs;
+            XftFont* xft_font = XftFontOpenName(wm.display, wm.screen, fontname);
+            XftDraw* xft_draw = XftDrawCreate(wm.display, win, DefaultVisual(wm.display, wm.screen), DefaultColormap(wm.display, wm.screen)); 
+            XftColor xft_font_color;
+            XftColorAllocName(wm.display,DefaultVisual(wm.display,0),DefaultColormap(wm.display,0),fontcolor, &xft_font_color);
+
+            fs.font = xft_font;
+            fs.draw = xft_draw;
+            fs.color = xft_font_color;
+
+            return fs;
+        }
+
+        u_int32_t draw_text_icon_color(const char* icon, const char* text, Vec2 pos, FontStruct font, u_int32_t color, u_int32_t rect_x_add, Window win, u_int32_t height) {
+            XGlyphInfo extents;
+            XftTextExtents16(wm.display, font.font, (FcChar16*)text, strlen(text), &extents);
+            XGlyphInfo extents_icon;
+            XftTextExtents16(wm.display, font.font, (FcChar16*)icon, strlen(icon), &extents_icon);
+
+            XSetForeground(wm.display, DefaultGC(wm.display, wm.screen), color);
+            XFillRectangle(wm.display, win, DefaultGC(wm.display, wm.screen), pos.x, 0, extents.xOff + extents_icon.xOff + rect_x_add, height);
+
+            draw_str(icon, font, NULL, pos.x, pos.y);
+            draw_str(text, font, NULL, pos.x + extents_icon.xOff, pos.y);
+
+            return extents.xOff + extents_icon.xOff + rect_x_add;
+        }
+
+        void draw_bar_buttons() {
+            if(!SHOW_BAR || wm.bar.hidden) return;
+            u_int32_t xoffset = 0;
+            for(u_int32_t i = 0; i < BAR_BUTTON_COUNT; i++) {
+                XRaiseWindow(wm.display, BarButtons[i].win);
+                XClearWindow(wm.display, BarButtons[i].win);
+                XGlyphInfo extents;
+                if(str_unicode(BarButtons[i].icon)) {
+                    XftTextExtentsUtf16(wm.display, wm.bar.font.font, (FcChar8*)BarButtons[i].icon, FcEndianBig, strlen(BarButtons[i].icon), &extents);
+                } else {
+                    XftTextExtents8(wm.display, wm.bar.font.font, (FcChar8*)BarButtons[i].icon, strlen(BarButtons[i].icon), &extents);
+                }
+
+                BarButtons[i].font = font_create(FONT, FONT_COLOR, BarButtons[i].win);
+                draw_text_icon_color(BarButtons[i].icon, "", (Vec2){(BAR_BUTTON_SIZE / 2.0f) - ((str_unicode(BarButtons[i].icon)) ? (extents.width) : (extents.width / 2.0f)), (BAR_SIZE / 2.0f) + (FONT_SIZE / 2.0f)}, BarButtons[i].font, BarButtons[i].color, 0, BarButtons[i].win, BAR_SIZE);
+                xoffset += BAR_BUTTON_SIZE + BAR_BUTTON_PADDING;
+            }
+        }
+
+        void raise_bar() {
+            if(SHOW_BAR) {
+                XRaiseWindow(wm.display, wm.bar.win);
+                for(u_int32_t i = 0; i < BAR_BUTTON_COUNT; i++) {
+                    XRaiseWindow(wm.display, BarButtons[i].win);
+                }
+            }
+        }
+
+        void unhide_bar() {
+            if(!SHOW_BAR) return;
+            if(!wm.bar.hidden) return;
+            XMapWindow(wm.display, wm.bar.win);
+            for(u_int32_t i = 0; i < BAR_BUTTON_COUNT; i++) {
+                XMapWindow(wm.display, BarButtons[i].win);
+            }
+            raise_bar();
+            wm.bar.hidden = false;
+            draw_bar_buttons();
+            draw_bar();
+        }
+
+        void neon_window_unframe(Window win) {
+            int32_t client_index = get_client_index_window(win);
+            if(client_index == -1) {
+                return;
+            }
+            bool fullscreen = wm.client_windows[client_index].fullscreen;
+
+            if(wm.client_windows[client_index].ignore_unmap) {
+                wm.client_windows[client_index].ignore_unmap = false;
+                return;
+            }
+            if(wm.client_windows[client_index].fullscreen) {
+                unhide_bar();
+            }
+            Window frame_win = wm.client_windows[client_index].frame;
+
+            if(wm.client_windows[client_index].layout.in && get_client_index_window(win) == 0) {
+                wm.layout_master_size[wm.focused_monitor][wm.focused_desktop[wm.focused_monitor]] = 0;
+            }
+            if(SHOW_DECORATION) {
+                XftColorFree(wm.display, DefaultVisual(wm.display, 0), DefaultColormap(wm.display, wm.screen), &wm.client_windows[client_index].decoration.titlebar_font.color);
+                XftFontClose(wm.display, wm.client_windows[client_index].decoration.titlebar_font.font);
+
+                XftColorFree(wm.display, DefaultVisual(wm.display, 0), DefaultColormap(wm.display, wm.screen), &wm.client_windows[client_index].decoration.titlebar_font.color);
+                XftFontClose(wm.display, wm.client_windows[client_index].decoration.titlebar_font.font);
+            }
+
+            XReparentWindow(wm.display, frame_win, wm.root, 0, 0);
+            XUnmapWindow(wm.display, frame_win);
+            XSetInputFocus(wm.display, wm.root, RevertToPointerRoot, CurrentTime);
+
+            for(u_int32_t i = client_index; i < wm.clients_count - 1; i++) {
+                wm.client_windows[i] = wm.client_windows[i + 1];
+            }
+            memset(&wm.client_windows[wm.clients_count - 1], 0, sizeof(Client));
+            wm.clients_count--;
+
+            if(wm.clients_count != 0) {
+                wm.client_windows[wm.clients_count - 1].layout.change = 0;
+            }
+            if(wm.hard_focused_window_index == client_index) {
+                wm.hard_focused_window_index = -1;
+            }
+            draw_bar_buttons();
+            draw_bar();
+            if(fullscreen) {
+                unhide_bar();
+            }
+            // establish_window_layout();
+        }
+
+        void handle_unmap_notify(XUnmapEvent e) {
+            if(get_client_index_window(e.window) != -1) {
+                neon_window_unframe(e.window);
+                return;
+            }
+            if(get_scratchpad_index_window(e.window) != -1) {
+                XUnmapWindow(wm.display, ScratchpadDefs[get_scratchpad_index_window(e.window)].frame);
+                ScratchpadDefs[get_scratchpad_index_window(e.window)].spawned = false;
+                XSetInputFocus(wm.display, wm.root, RevertToPointerRoot, CurrentTime);
+            }
+        }
+
         void neonwm_run() {
             XEvent e;
             while(wm.running) {
                 XNextEvent(wm.display, &e);
                 switch (e.type) {
                     case UnmapNotify:
-                        // handle_unmap_notify(e.xunmap);
+                        handle_unmap_notify(e.xunmap);
                         break;
                     case MapRequest:
                         // handle_map_request(e.xmaprequest);

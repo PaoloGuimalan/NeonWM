@@ -2,6 +2,7 @@
 #include "../specstructs/keybind.hpp"
 #include "../specstructs/scratchpad_def.hpp"
 #include "../specstructs/bar_desktop_icon.hpp"
+#include "../specstructs/bar_button.hpp"
 
 #define SHOW_BAR true
 
@@ -10,6 +11,15 @@
 
 #define WINDOW_LAYOUT_DEFAULT WINDOW_LAYOUT_TILED_MASTER
 #define WINDOW_INITIAL_GAP 10
+
+#define TERMINAL_CMD                            "xterm &"
+#define WEB_BROWSER_CMD                         "firefox &"
+#define APPLICATION_LAUNCHER_CMD                "dmenu_run &"
+
+#define FONT                                    "monnospace:size=12"
+#define FONT_SIZE                               12
+#define FONT_COLOR                              "#ffffff"
+#define DECORATION_FONT_COLOR                   "#ffffff"
 
 #define SHOW_DECORATION false
 #define DECORATION_TITLEBAR_SIZE                35
@@ -35,6 +45,7 @@
 #define WINDOW_BORDER_COLOR                     0x7a8478
 
 #define BAR_START_MONITOR 0
+#define BAR_BUTTON_COUNT 3
 
 #define UI_REFRESH_RATE 1.0f
 
@@ -81,6 +92,13 @@
 
 #define BAR_MAIN_LABEL_COLOR 0x2e383c
 #define BAR_SIZE 35
+#define BAR_PADDING_Y                         0
+#define BAR_PADDING_X                         0
+#define BAR_START_MONITOR                     0
+#define BAR_REFRESH_SPEED                     1.0
+#define BAR_COLOR                             0x1e2326
+#define BAR_BORDER_COLOR                      0x4f5b58
+#define BAR_BORDER_WIDTH                      0
 
 #define FONT_SIZE 12
 
@@ -94,6 +112,16 @@ static BarCommand BarCommands[BAR_COMMANDS_COUNT] =
 { 
     (BarCommand){.cmd = "echo \" RGNR\"", .color = "#ffffff", .bg_color = -1},
     (BarCommand){.cmd = "echo \" $(date +%R)\"", .color ="#5eb5eb", .bg_color = -1},
+};
+
+#define BAR_BUTTON_PADDING                  20
+#define BAR_BUTTON_SIZE                     120
+#define BAR_BUTTON_COUNT                    3
+static BarButton BarButtons[BAR_BUTTON_COUNT] =
+{
+    (BarButton){.cmd = APPLICATION_LAUNCHER_CMD, .icon = "Search", .color = 0x2e383c},
+    (BarButton){.cmd = TERMINAL_CMD, .icon = "Terminal", .color = 0x2e383c},
+    (BarButton){.cmd = WEB_BROWSER_CMD, .icon = "Web", .color = 0x2e383c},
 };
 
 /* Scratchpads */

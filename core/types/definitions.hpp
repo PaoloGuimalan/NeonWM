@@ -40,7 +40,7 @@ typedef struct
     u_int8_t monitor_index;
     int8_t desktop_index;
 
-    LayoutProps current_layout;
+    LayoutProps layout;
     bool ignore_unmap, ignore_enter;
 
     Decoration decoration;
