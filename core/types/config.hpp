@@ -1,12 +1,16 @@
+#pragma once
+
 #include "../specstructs/bar_command.hpp"
 #include "../specstructs/keybind.hpp"
 #include "../specstructs/scratchpad_def.hpp"
 #include "../specstructs/bar_desktop_icon.hpp"
 #include "../specstructs/bar_button.hpp"
+#include "../specstructs/monitor.hpp"
 
 #define SHOW_BAR true
 
 #define MONITOR_COUNT 1
+static const Monitor Monitors[MONITOR_COUNT] = {(Monitor){.width = 1920, .height = 1080}};
 #define DESKTOP_COUNT 6
 
 #define WINDOW_LAYOUT_DEFAULT WINDOW_LAYOUT_TILED_MASTER
@@ -43,6 +47,14 @@
 #define WINDOW_SELECT_HOVERED true
 #define WINDOW_BORDER_COLOR_ACTIVE              0xd3c6aa
 #define WINDOW_BORDER_COLOR                     0x7a8478
+#define WINDOW_MAX_COUNT_LAYOUT                 5
+#define WINDOW_BORDER_WIDTH                     3
+#define WINDOW_TRANSPARENT_FRAME                false
+#define WINDOW_BG_COLOR                         0x434343 
+#define WINDOW_BORDER_COLOR_HARD_SELECTED       0xa7c080
+#define WINDOW_MAX_GAP                          100
+#define WINDOW_MIN_SIZE_LAYOUT_HORIZONTAL       300 
+#define WINDOW_MIN_SIZE_LAYOUT_VERTICAL         100
 
 #define BAR_START_MONITOR 0
 #define BAR_BUTTON_COUNT 3
@@ -102,21 +114,34 @@
 
 #define FONT_SIZE 12
 
+#define BAR_SHOW_DESKTOP_LABEL                true
+#define BAR_SHOW_VERSION_LABEL                true
+#define BAR_DESKTOP_LABEL_ICON_SIZE           50
+#define BAR_DESKTOP_LABEL_COLOR               0x2e383c
+#define BAR_DESKTOP_LABEL_SELECTED_COLOR      0x1e2326
+#define BAR_VERSION_LABEL_COLOR               0x2e383c 
+
 #define BAR_LABEL_DESIGN_WIDTH 20
+
 #define BAR_MAIN_LABEL_DESIGN DESIGN_ROUND_RIGHT
+#define BAR_DESKTOP_LABEL_DESIGN_FRONT DESIGN_ROUND_LEFT
+#define BAR_DESKTOP_LABEL_DESIGN_BACK DESIGN_ROUND_RIGHT
+
+static const u_int32_t BarInfoLabelPos[MONITOR_COUNT] = {810};
 
 #define BAR_COMMAND_SEPARATOR "|"
 
 #define BAR_COMMANDS_COUNT 2
 static BarCommand BarCommands[BAR_COMMANDS_COUNT] = 
 { 
-    (BarCommand){.cmd = "echo \" RGNR\"", .color = "#ffffff", .bg_color = -1},
+    (BarCommand){.cmd = "echo \" NEON\"", .color = "#ffffff", .bg_color = -1},
     (BarCommand){.cmd = "echo \" $(date +%R)\"", .color ="#5eb5eb", .bg_color = -1},
 };
 
 #define BAR_BUTTON_PADDING                  20
 #define BAR_BUTTON_SIZE                     120
 #define BAR_BUTTON_COUNT                    3
+static const u_int32_t BarButtonLabelPos[MONITOR_COUNT] = { 1300 };
 static BarButton BarButtons[BAR_BUTTON_COUNT] =
 {
     (BarButton){.cmd = APPLICATION_LAUNCHER_CMD, .icon = "Search", .color = 0x2e383c},

@@ -1,3 +1,5 @@
+#pragma once
+
 typedef enum {
     WINDOW_LAYOUT_TILED_MASTER = 0,
     WINDOW_LAYOUT_HORIZONTAL_MASTER,
