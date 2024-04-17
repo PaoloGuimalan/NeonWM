@@ -22,7 +22,7 @@ typedef struct
     Client client_windows[CLIENT_WINDOW_CAP];
     u_int32_t clients_count;
 
-    int8_t focused_monitor;
+    u_int8_t focused_monitor;
     int32_t bar_monitor;
     int32_t focused_client;
     int8_t focused_desktop[MONITOR_COUNT];
@@ -37,6 +37,7 @@ typedef struct
 
     bool decoration_hidden;
     Bar bar;
+    Bar footer;
     double bar_refresh_timer;
 
     bool spawning_scratchpad;

@@ -5,7 +5,16 @@
 #include <X11/Xatom.h>
 #include <algorithm>
 #include <X11/Xft/Xft.h>
+#include <png.h>
 #include "./specstructs/neonwm.hpp"
+#include <cstring>
+#include <string>
+
+extern "C" {
+    extern const char *image_xpm[];
+    extern const int image_width;
+    extern const int image_height;
+}
 
 class neoncore
 {
@@ -475,6 +484,7 @@ class neoncore
         static void raise_bar() {
             if(SHOW_BAR) {
                 XRaiseWindow(wm.display, wm.bar.win);
+                XRaiseWindow(wm.display, wm.footer.win);
                 for(u_int32_t i = 0; i < BAR_BUTTON_COUNT; i++) {
                     XRaiseWindow(wm.display, BarButtons[i].win);
                 }
@@ -502,7 +512,7 @@ class neoncore
             XftTextExtents16(wm.display, font.font, (FcChar16*)icon, strlen(icon), &extents_icon);
 
             XSetForeground(wm.display, DefaultGC(wm.display, wm.screen), color);
-            XFillRectangle(wm.display, win, DefaultGC(wm.display, wm.screen), pos.x, 0, extents.xOff + extents_icon.xOff + rect_x_add, height);
+            XFillRectangle(wm.display, win, DefaultGC(wm.display, wm.screen), pos.x, pos.y, extents.xOff + extents_icon.xOff + rect_x_add, 400);
 
             draw_str(icon, font, NULL, pos.x, pos.y);
             draw_str(text, font, NULL, pos.x + extents_icon.xOff, pos.y);
@@ -524,7 +534,7 @@ class neoncore
                 }
 
                 BarButtons[i].font = font_create(FONT, FONT_COLOR, BarButtons[i].win);
-                draw_text_icon_color(BarButtons[i].icon, "", (Vec2){(BAR_BUTTON_SIZE / 2.0f) - ((str_unicode(BarButtons[i].icon)) ? (extents.width) : (extents.width / 2.0f)), (BAR_SIZE / 2.0f) + (FONT_SIZE / 2.0f)}, BarButtons[i].font, BarButtons[i].color, 0, BarButtons[i].win, BAR_SIZE);
+                draw_text_icon_color(BarButtons[i].icon, "", (Vec2){(BAR_BUTTON_SIZE / 2.0f) - ((str_unicode(BarButtons[i].icon)) ? (extents.width) : (extents.width / 2.0f)), (BAR_SIZE / 2.0f) + (FONT_SIZE / 2.0f)}, BarButtons[i].font, BarButtons[i].color, 0, BarButtons[i].win, (BAR_BUTTON_SIZE / 2.0f) - ((str_unicode(BarButtons[i].icon)) ? (extents.height) : (extents.height / 2.0f)));
                 xoffset += BAR_BUTTON_SIZE + BAR_BUTTON_PADDING;
             }
         }
@@ -957,7 +967,7 @@ class neoncore
             if(!SHOW_BAR) return;
             wm.bar.win = XCreateSimpleWindow(wm.display, 
                                             wm.root, get_monitor_start_x(wm.bar_monitor) + BAR_PADDING_X, BAR_PADDING_Y, 
-                                            Monitors[wm.bar_monitor].width - (BAR_PADDING_X * 2.3f), BAR_SIZE, 
+                                            (Monitors[wm.bar_monitor].width - (BAR_PADDING_X * 2.3f)) / 2, BAR_SIZE, 
                                             BAR_BORDER_WIDTH,  BAR_BORDER_COLOR, BAR_COLOR);
             XSelectInput(wm.display, wm.bar.win, SubstructureRedirectMask | SubstructureNotifyMask); 
             XMapWindow(wm.display, wm.bar.win);
@@ -989,9 +999,57 @@ class neoncore
             for(u_int32_t i = 0; i < DESKTOP_COUNT; i++) {
                 XftColorAllocName(wm.display,DefaultVisual(wm.display,0),DefaultColormap(wm.display, 0), DesktopIcons[i].color, &DesktopIcons[i]._xcolor);
             }
+            draw_triangle(wm.root, 
+                (Vec2){.x = static_cast<float>((Monitors[wm.bar_monitor].width - (BAR_PADDING_X * 2.3f)) / 2) + BAR_SIZE, .y = 0}, 
+                (Vec2){.x = static_cast<float>((Monitors[wm.bar_monitor].width - (BAR_PADDING_X * 2.3f)) / 2), .y = 0}, 
+                (Vec2){.x = static_cast<float>((Monitors[wm.bar_monitor].width - (BAR_PADDING_X * 2.3f)) / 2), .y = BAR_SIZE}, 
+            BAR_COLOR);
             draw_bar_buttons();
             wm.bar.init = true;
             wm.bar.hidden = false;
+        }
+
+        void create_footer() {
+            if(!SHOW_BAR) return;
+            wm.footer.win = XCreateSimpleWindow(wm.display, 
+                                            wm.root, get_monitor_start_x(wm.bar_monitor) + (Monitors[wm.bar_monitor].width - (BAR_PADDING_X * 2.3f)) / 2, 
+                                            Monitors[wm.bar_monitor].height - BAR_SIZE, 
+                                            (Monitors[wm.bar_monitor].width - (BAR_PADDING_X * 2.3f)) / 2, BAR_SIZE, 
+                                            BAR_BORDER_WIDTH,  BAR_BORDER_COLOR, BAR_COLOR);
+            XSelectInput(wm.display, wm.footer.win, SubstructureRedirectMask | SubstructureNotifyMask); 
+            XMapWindow(wm.display, wm.footer.win);
+
+            XClassHint classHint;
+            char bar_name[] = "NeonBar";
+            classHint.res_name = bar_name;
+            classHint.res_class = bar_name;
+            XSetClassHint(wm.display, wm.footer.win, &classHint);
+            XSetStandardProperties(wm.display, wm.footer.win, bar_name, bar_name, None, NULL, 0, NULL);
+
+            wm.footer.font = font_create(FONT, FONT_COLOR, wm.footer.win);
+            u_int32_t xoffset = 0;
+            for(u_int32_t i = 0; i < BAR_BUTTON_COUNT; i++) {
+                
+                BarButtons[i].win = XCreateSimpleWindow(wm.display, wm.root, get_monitor_start_x(wm.bar_monitor) + BarButtonLabelPos[wm.bar_monitor] + xoffset, BAR_PADDING_Y + WINDOW_BORDER_WIDTH, BAR_BUTTON_SIZE, 
+                                                        BAR_SIZE - WINDOW_BORDER_WIDTH, 0, 0x000000, BarButtons[i].color);
+                XSelectInput(wm.display, BarButtons[i].win, ButtonPressMask); 
+                XMapWindow(wm.display, BarButtons[i].win);
+                XRaiseWindow(wm.display, BarButtons[i].win);
+                xoffset += BAR_BUTTON_SIZE + BAR_BUTTON_PADDING;
+            }
+
+            // Allocate the colors of the bar commands
+            for(u_int32_t i = 0; i < BAR_COMMANDS_COUNT; i++) {
+                XftColorAllocName(wm.display,DefaultVisual(wm.display,0),DefaultColormap(wm.display, 0), BarCommands[i].color, &BarCommands[i]._xcolor);
+            }
+            draw_bar_buttons();
+            draw_triangle(wm.root, 
+                (Vec2){.x = static_cast<float>((Monitors[wm.bar_monitor].width - (BAR_PADDING_X * 2.3f)) / 2 - BAR_SIZE) + BAR_SIZE, .y = static_cast<float>(Monitors[wm.bar_monitor].height)}, 
+                (Vec2){.x = static_cast<float>((Monitors[wm.bar_monitor].width - (BAR_PADDING_X * 2.3f)) / 2 - BAR_SIZE), .y = static_cast<float>(Monitors[wm.bar_monitor].height)}, 
+                (Vec2){.x = static_cast<float>((Monitors[wm.bar_monitor].width - (BAR_PADDING_X * 2.3f)) / 2 - BAR_SIZE) + BAR_SIZE, .y = static_cast<float>(Monitors[wm.bar_monitor].height) - BAR_SIZE}, 
+            BAR_COLOR);
+            wm.footer.init = true;
+            wm.footer.hidden = false;
         }
 
         void init_neon(){
@@ -1038,6 +1096,7 @@ class neoncore
             grab_global_input();
             if(SHOW_BAR) {
                 create_bar();
+                create_footer();
                 draw_bar();
                 draw_bar_buttons();
             }
@@ -1450,7 +1509,7 @@ class neoncore
             XSetForeground(wm.display, DefaultGC(wm.display, wm.screen), BAR_COLOR);
             XFillRectangle(wm.display, wm.bar.win, DefaultGC(wm.display, wm.screen), xoffset, 0, BAR_DESKTOP_LABEL_ICON_SIZE * DESKTOP_COUNT, BAR_SIZE);
 
-            draw_design(wm.bar.win, xoffset, BAR_DESKTOP_LABEL_DESIGN_FRONT, BAR_DESKTOP_LABEL_COLOR, BAR_LABEL_DESIGN_WIDTH, BAR_SIZE);
+            draw_design(wm.bar.win, xoffset, DESIGN_STRAIGHT, BAR_DESKTOP_LABEL_COLOR, BAR_LABEL_DESIGN_WIDTH, BAR_SIZE);
 
             for(u_int32_t i = 0; i < DESKTOP_COUNT; i++) {
                 XSetForeground(wm.display, DefaultGC(wm.display, wm.screen), ((int32_t)i == wm.focused_desktop[wm.focused_monitor]) ? BAR_DESKTOP_LABEL_SELECTED_COLOR : BAR_DESKTOP_LABEL_COLOR);

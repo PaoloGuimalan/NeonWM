@@ -20,7 +20,7 @@ static const Monitor Monitors[MONITOR_COUNT] = {(Monitor){.width = 1920, .height
 #define WEB_BROWSER_CMD                         "firefox &"
 #define APPLICATION_LAUNCHER_CMD                "dmenu_run &"
 
-#define FONT                                    "monnospace:size=12"
+#define FONT                                    "JetBrains Mono Nerd Font:size=12:style=bold"
 #define FONT_SIZE                               12
 #define FONT_COLOR                              "#ffffff"
 #define DECORATION_FONT_COLOR                   "#ffffff"
@@ -44,12 +44,13 @@ static const Monitor Monitors[MONITOR_COUNT] = {(Monitor){.width = 1920, .height
 #define DECORATION_ICONS_LABEL_DESIGN           DESIGN_ROUND_LEFT
 #define DECORATION_TITLE_LABEL_DESIGN           DESIGN_ROUND_RIGHT
 
+#define WINDOW_BG_IMAGE_PATH "/home/neon/Downloads/1337829.xpm"
 #define WINDOW_SELECT_HOVERED true
 #define WINDOW_BORDER_COLOR_ACTIVE              0xd3c6aa
 #define WINDOW_BORDER_COLOR                     0x7a8478
 #define WINDOW_MAX_COUNT_LAYOUT                 5
 #define WINDOW_BORDER_WIDTH                     3
-#define WINDOW_TRANSPARENT_FRAME                false
+#define WINDOW_TRANSPARENT_FRAME                true
 #define WINDOW_BG_COLOR                         0x434343 
 #define WINDOW_BORDER_COLOR_HARD_SELECTED       0xa7c080
 #define WINDOW_MAX_GAP                          100
@@ -102,13 +103,13 @@ static const Monitor Monitors[MONITOR_COUNT] = {(Monitor){.width = 1920, .height
 #define DESKTOP_CLIENT_CYCLE_UP_KEY             XK_P
 #define DESKTOP_CLIENT_CYCLE_DOWN_KEY           XK_O
 
-#define BAR_MAIN_LABEL_COLOR 0x2e383c
+#define BAR_MAIN_LABEL_COLOR 0xcccccc
 #define BAR_SIZE 35
 #define BAR_PADDING_Y                         0
 #define BAR_PADDING_X                         0
 #define BAR_START_MONITOR                     0
 #define BAR_REFRESH_SPEED                     1.0
-#define BAR_COLOR                             0x1e2326
+#define BAR_COLOR                             0xffffff //0x1e2326
 #define BAR_BORDER_COLOR                      0x4f5b58
 #define BAR_BORDER_WIDTH                      0
 
@@ -123,7 +124,8 @@ static const Monitor Monitors[MONITOR_COUNT] = {(Monitor){.width = 1920, .height
 
 #define BAR_LABEL_DESIGN_WIDTH 20
 
-#define BAR_MAIN_LABEL_DESIGN DESIGN_ROUND_RIGHT
+#define BAR_MAIN_LABEL_DESIGN  DESIGN_STRAIGHT 
+//DESIGN_ROUND_RIGHT
 #define BAR_DESKTOP_LABEL_DESIGN_FRONT DESIGN_ROUND_LEFT
 #define BAR_DESKTOP_LABEL_DESIGN_BACK DESIGN_ROUND_RIGHT
 
@@ -138,15 +140,15 @@ static BarCommand BarCommands[BAR_COMMANDS_COUNT] =
     (BarCommand){.cmd = "echo \" $(date +%R)\"", .color ="#5eb5eb", .bg_color = -1},
 };
 
-#define BAR_BUTTON_PADDING                  20
-#define BAR_BUTTON_SIZE                     120
+#define BAR_BUTTON_PADDING                  15
+#define BAR_BUTTON_SIZE                     50
 #define BAR_BUTTON_COUNT                    3
-static const u_int32_t BarButtonLabelPos[MONITOR_COUNT] = { 1300 };
+static const u_int32_t BarButtonLabelPos[MONITOR_COUNT] = { 1500 };
 static BarButton BarButtons[BAR_BUTTON_COUNT] =
 {
-    (BarButton){.cmd = APPLICATION_LAUNCHER_CMD, .icon = "Search", .color = 0x2e383c},
-    (BarButton){.cmd = TERMINAL_CMD, .icon = "Terminal", .color = 0x2e383c},
-    (BarButton){.cmd = WEB_BROWSER_CMD, .icon = "Web", .color = 0x2e383c},
+    (BarButton){.cmd = APPLICATION_LAUNCHER_CMD, .icon = "S", .color = 0xcccccc},
+    (BarButton){.cmd = TERMINAL_CMD, .icon = "T", .color = 0xcccccc},
+    (BarButton){.cmd = WEB_BROWSER_CMD, .icon = "W", .color = 0xcccccc},
 };
 
 /* Scratchpads */
