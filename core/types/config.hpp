@@ -10,7 +10,7 @@
 #define SHOW_BAR true
 
 #define MONITOR_COUNT 1
-static const Monitor Monitors[MONITOR_COUNT] = {(Monitor){.width = 1920, .height = 1080}};
+static const Monitor Monitors[MONITOR_COUNT] = {(Monitor){.width = 1820, .height = 980}};
 #define DESKTOP_COUNT 6
 
 #define WINDOW_LAYOUT_DEFAULT WINDOW_LAYOUT_TILED_MASTER
@@ -104,7 +104,7 @@ static const Monitor Monitors[MONITOR_COUNT] = {(Monitor){.width = 1920, .height
 #define DESKTOP_CLIENT_CYCLE_DOWN_KEY           XK_O
 
 #define BAR_MAIN_LABEL_COLOR 0xcccccc
-#define FOOTER_COLOR 0x3d3d3d
+#define FOOTER_COLOR 0x80808080
 #define BAR_SIZE 5
 #define BAR_HEADER_SIZE 85
 #define FOOTER_SIZE 60

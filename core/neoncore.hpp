@@ -1914,6 +1914,8 @@ class neoncore
                     system(CustomKeybinds[i].cmd);
                 }
             }
+
+            raise_bar();
         }
 
         Vec2 get_cursor_position() {
