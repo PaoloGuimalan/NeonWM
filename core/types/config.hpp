@@ -10,7 +10,7 @@
 #define SHOW_BAR true
 
 #define MONITOR_COUNT 1
-static const Monitor Monitors[MONITOR_COUNT] = {(Monitor){.width = 1820, .height = 980}};
+static const Monitor Monitors[MONITOR_COUNT] = {(Monitor){.width = 1920, .height = 1080}};
 #define DESKTOP_COUNT 6
 
 #define WINDOW_LAYOUT_DEFAULT WINDOW_LAYOUT_TILED_MASTER
