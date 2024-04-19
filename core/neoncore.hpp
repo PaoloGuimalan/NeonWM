@@ -913,17 +913,17 @@ class neoncore
                         xoff += extents.xOff;
                     }
                     XSetForeground(wm.display, DefaultGC(wm.display, wm.screen), BarCommands[i].bg_color == -1 ? BAR_MAIN_LABEL_COLOR : BarCommands[i].bg_color);
-                    XFillRectangle(wm.display, wm.bar.win, DefaultGC(wm.display, wm.screen), xoffset, 0, xoff, BAR_SIZE);
+                    XFillRectangle(wm.display, wm.bar.win, DefaultGC(wm.display, wm.screen), xoffset, 0, xoff, BAR_HEADER_SIZE);
                     draw_triangle(wm.root, 
-                        (Vec2){.x = static_cast<float>(400) + BAR_SIZE, .y = 0}, 
+                        (Vec2){.x = static_cast<float>(400) + BAR_HEADER_SIZE, .y = 0}, 
                         (Vec2){.x = static_cast<float>(400), .y = 0}, 
-                        (Vec2){.x = static_cast<float>(400), .y = BAR_SIZE}, 
+                        (Vec2){.x = static_cast<float>(400), .y = BAR_HEADER_SIZE}, 
                     BAR_COLOR);
                     
-                    draw_str(text, wm.bar.font, &BarCommands[i]._xcolor, xoffset, (BAR_SIZE / 2.0f) + (FONT_SIZE / 2.0f));
+                    draw_str(text, wm.bar.font, &BarCommands[i]._xcolor, xoffset, (BAR_HEADER_SIZE / 2.0f) + (FONT_SIZE / 2.0f));
                     xoffset += xoff;
                 }
-                draw_design(wm.bar.win, xoffset, BAR_MAIN_LABEL_DESIGN, BAR_MAIN_LABEL_COLOR, BAR_LABEL_DESIGN_WIDTH, BAR_SIZE);
+                draw_design(wm.bar.win, xoffset, BAR_MAIN_LABEL_DESIGN, BAR_MAIN_LABEL_COLOR, BAR_LABEL_DESIGN_WIDTH, BAR_HEADER_SIZE);
                 xoffset += BAR_LABEL_DESIGN_WIDTH;
             }
         }
@@ -973,7 +973,7 @@ class neoncore
             if(!SHOW_BAR) return;
             wm.bar.win = XCreateSimpleWindow(wm.display, 
                                             wm.root, get_monitor_start_x(wm.bar_monitor) + BAR_PADDING_X, BAR_PADDING_Y, 
-                                            400, BAR_SIZE, 
+                                            400, BAR_HEADER_SIZE, 
                                             BAR_BORDER_WIDTH,  BAR_BORDER_COLOR, BAR_COLOR);
             XSelectInput(wm.display, wm.bar.win, SubstructureRedirectMask | SubstructureNotifyMask); 
             XMapWindow(wm.display, wm.bar.win);
@@ -1006,9 +1006,9 @@ class neoncore
                 XftColorAllocName(wm.display,DefaultVisual(wm.display,0),DefaultColormap(wm.display, 0), DesktopIcons[i].color, &DesktopIcons[i]._xcolor);
             }
             draw_triangle(wm.root, 
-                (Vec2){.x = static_cast<float>(400) + BAR_SIZE, .y = 0}, 
+                (Vec2){.x = static_cast<float>(400) + BAR_HEADER_SIZE, .y = 0}, 
                 (Vec2){.x = static_cast<float>(400), .y = 0}, 
-                (Vec2){.x = static_cast<float>(400), .y = BAR_SIZE}, 
+                (Vec2){.x = static_cast<float>(400), .y = BAR_HEADER_SIZE}, 
             BAR_COLOR);
             // draw_bar_buttons();
             wm.bar.init = true;

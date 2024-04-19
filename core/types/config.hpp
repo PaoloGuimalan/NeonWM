@@ -21,7 +21,7 @@ static const Monitor Monitors[MONITOR_COUNT] = {(Monitor){.width = 1920, .height
 #define APPLICATION_LAUNCHER_CMD                "dmenu_run &"
 
 #define FONT                                    "JetBrains Mono Nerd Font:size=12:style=bold"
-#define FONT_SIZE                               12
+#define FONT_SIZE                               10
 #define FONT_COLOR                              "#ffffff"
 #define DECORATION_FONT_COLOR                   "#ffffff"
 
@@ -105,7 +105,8 @@ static const Monitor Monitors[MONITOR_COUNT] = {(Monitor){.width = 1920, .height
 
 #define BAR_MAIN_LABEL_COLOR 0xcccccc
 #define FOOTER_COLOR 0x3d3d3d
-#define BAR_SIZE 85
+#define BAR_SIZE 5
+#define BAR_HEADER_SIZE 85
 #define FOOTER_SIZE 60
 #define FOOTER_WIDTH 600
 #define BAR_PADDING_Y                         0
@@ -115,8 +116,6 @@ static const Monitor Monitors[MONITOR_COUNT] = {(Monitor){.width = 1920, .height
 #define BAR_COLOR                             0xffffff //0x1e2326
 #define BAR_BORDER_COLOR                      0x4f5b58
 #define BAR_BORDER_WIDTH                      0
-
-#define FONT_SIZE 12
 
 #define BAR_SHOW_DESKTOP_LABEL                true
 #define BAR_SHOW_VERSION_LABEL                true
